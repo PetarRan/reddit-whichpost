@@ -1,58 +1,107 @@
-// Learn more at developers.reddit.com/docs
 import { Devvit, useState } from '@devvit/public-api';
+import React from 'react';
 
+import { MainMenu } from './components/MainMenu';
+import { GameInterface } from './components/GameInterface';
+import { determineCorrectGuess, generateMockPosts } from './utils/gameLogic';
+import { GameMode, GamePost, Metric } from './types/game';
+
+function WhichPostGame() {
+  const [mode, setMode] = useState<GameMode>(null);
+  const [posts, setPosts] = useState<GamePost[] | null>(null);
+  const [timer, setTimer] = useState(7);
+  const [currentMetric, setCurrentMetric] = useState<Metric>('karma');
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+
+  const fetchPosts = async () => {
+    // TODO: Replace with actual Reddit API fetch
+    const mockPosts = generateMockPosts();
+    setPosts(mockPosts);
+    startTimer();
+  };
+
+  const startTimer = () => {
+    setTimer(7);
+    const timerInterval = setInterval(() => {
+      setTimer(prev => {
+        if (prev <= 0) {
+          clearInterval(timerInterval);
+          handleTimeOut();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleGuess = (chosenPostId: string) => {
+    if (!posts) return;
+
+    const { isCorrect, newMetric } = determineCorrectGuess(
+      posts as [GamePost, GamePost], 
+      chosenPostId, 
+      mode, 
+      currentMetric
+    );
+
+    if (newMetric) {
+      setCurrentMetric(newMetric);
+      // Recursive call with same post for mystery metric
+      return handleGuess(chosenPostId);
+    }
+
+    if (isCorrect) {
+      setScore(prev => prev + 1);
+      setStreak(prev => prev + 1);
+    } else {
+      setStreak(0);
+    }
+
+    // Fetch new posts
+    fetchPosts();
+  };
+
+  const handleTimeOut = () => {
+    setStreak(0);
+    fetchPosts();
+  };
+
+  const handleModeSelect = (selectedMode: GameMode) => {
+    setMode(selectedMode);
+    fetchPosts();
+  };
+
+  // Main render logic
+  return mode !== null && posts ? (
+    <GameInterface 
+      mode={mode}
+      posts={posts}
+      timer={timer}
+      score={score}
+      streak={streak}
+      currentMetric={mode === 'CHAOS' ? currentMetric : undefined}
+      onGuess={handleGuess}
+      onBackToMenu={() => setMode(null)}
+    />
+  ) : (
+    <MainMenu onModeSelect={handleModeSelect} />
+  );
+}
+
+// Configure Devvit app
 Devvit.configure({
   redditAPI: true,
 });
 
-// Add a menu item to the subreddit menu for instantiating the new experience post
-Devvit.addMenuItem({
-  label: 'Add my post',
-  location: 'subreddit',
-  forUserType: 'moderator',
-  onPress: async (_event, context) => {
-    const { reddit, ui } = context;
-    ui.showToast("Submitting your post - upon completion you'll navigate there.");
-
-    const subreddit = await reddit.getCurrentSubreddit();
-    const post = await reddit.submitPost({
-      title: 'My devvit post',
-      subredditName: subreddit.name,
-      // The preview appears while the post loads
-      preview: (
-        <vstack height="100%" width="100%" alignment="middle center">
-          <text size="large">Loading ...</text>
-        </vstack>
-      ),
-    });
-    ui.navigateTo(post);
-  },
-});
-
-// Add a post type definition
+// Add custom post type
 Devvit.addCustomPostType({
-  name: 'Experience Post',
-  height: 'regular',
-  render: (_context) => {
-    const [counter, setCounter] = useState(0);
-
-    return (
-      <vstack height="100%" width="100%" gap="medium" alignment="center middle">
-        <image
-          url="logo.png"
-          description="logo"
-          imageHeight={256}
-          imageWidth={256}
-          height="48px"
-          width="48px"
-        />
-        <text size="large">{`Click counter: ${counter}`}</text>
-        <button appearance="primary" onPress={() => setCounter((counter) => counter + 1)}>
-          Click me!
-        </button>
-      </vstack>
-    );
-  },
+  name: 'WhichPost Game',
+  render: (context) => (
+    <vstack height="100%" width="100%">
+      <WhichPostGame />
+    </vstack>
+  ),
 });
 
 export default Devvit;
