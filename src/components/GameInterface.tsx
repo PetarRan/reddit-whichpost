@@ -173,11 +173,11 @@ export function GameInterface({
     );
   }
 
-  if (mode === 'CHALLENGE') {
+  if (mode === 'CHALLENGE' || mode === 'LEADERBOARD') {
     return (
       <vstack width="100%" padding="medium" gap="medium" alignment="center middle" height="100%">
         <text size="xxlarge" weight="bold">COMING SOON</text>
-        <text size="large">The Challenge mode is under development. Stay tuned!</text>
+        <text size="large">The Challenge mode & Leaderboard are under development. Stay tuned!</text>
         <button 
           width="45%" 
           backgroundColor="neutral-background" 
