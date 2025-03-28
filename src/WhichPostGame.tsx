@@ -14,6 +14,7 @@ export function WhichPostGame() {
   const [bestStreak, setBestStreak] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [shouldFetchPosts, setShouldFetchPosts] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   // Handle timer with useInterval
   const timerInterval = useInterval(() => {
@@ -74,6 +75,7 @@ export function WhichPostGame() {
         setBestStreak(newStreak);
       }
     } else {
+      setGameOver(true);
       setStreak(0);
     }
 
@@ -106,11 +108,25 @@ export function WhichPostGame() {
       score={score}
       streak={streak}
       bestStreak={bestStreak}
+      gameOverParent={gameOver}
       currentMetric={mode === 'CHAOS' ? currentMetric : undefined}
       onGuess={handleGuess}
       onBackToMenu={() => {
         setIsTimerRunning(false);
         setMode(null);
+      }}
+      onRetry={() => {
+        // Reset game state for retry
+        setScore(0);
+        setStreak(0);
+        // Keep the best streak
+        // Reset timer
+        setGameOver(false);
+        setTimer(7);
+        // Fetch new posts
+        setShouldFetchPosts(true);
+        // Start the timer again
+        setIsTimerRunning(true);
       }}
     />
   ) : (
