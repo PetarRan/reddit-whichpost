@@ -28,7 +28,7 @@ export function GameInterface({
   currentMetric,
   onGuess,
   onBackToMenu,
-  onRetry
+  onRetry,
 }: GameInterfaceProps) {
   const [timeLeft, setTimeLeft] = useState(timer);
   const [gameOver, setGameOver] = useState(false);
@@ -109,7 +109,7 @@ export function GameInterface({
             key={post.id} 
             width="45%" 
             borderWidth="2px" 
-            borderColor={post.id === correctPost.id ? "upvote" : "downvote"}
+            borderColor={post.id === correctPost.id ? "green" : "red"}
             cornerRadius="medium"
             padding="small"
           >

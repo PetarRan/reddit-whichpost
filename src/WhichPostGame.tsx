@@ -108,7 +108,7 @@ export function WhichPostGame(context) {
   };
 
   // Main render logic
-  return mode !== null ? (
+  return mode !== null && !loading ? (
     <GameInterface 
       mode={mode}
       posts={posts}

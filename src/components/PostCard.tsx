@@ -17,9 +17,9 @@ export function PostCard({ post, showValue = false, onPress, gameMode = '' }: Po
       overflow="hidden"
       onPress={onPress}
     >
-      {post.image && (
+      {post.thumbnail && (
         <image 
-          url={post.image}
+          url={post.thumbnail}
           imageWidth={120}
           imageHeight={120}
           width="100%"
