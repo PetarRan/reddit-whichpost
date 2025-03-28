@@ -6,9 +6,17 @@ interface PostCardProps {
   showValue?: boolean;
   onPress?: () => void;
   gameMode?: string;
+  currentMetric?: string;
 }
 
-export function PostCard({ post, showValue = false, onPress, gameMode = '' }: PostCardProps) {
+export function PostCard({ post, showValue = false, onPress, gameMode = '', currentMetric }: PostCardProps) {
+  let formattedDate = '';
+  if(post.createdAt !== undefined) {
+    const date = new Date(post.createdAt);
+    formattedDate = date.getFullYear() + "-" +
+      String(date.getMonth() + 1).padStart(2, "0") + "-" +
+      String(date.getDate()).padStart(2, "0");
+  }
   return (
     <vstack 
       width="100%" 
@@ -40,7 +48,13 @@ export function PostCard({ post, showValue = false, onPress, gameMode = '' }: Po
         {showValue && (
           <hstack padding="small" cornerRadius="medium" backgroundColor="primary-background" alignment="center">
             {gameMode === "ERA" ? (
-              <text weight="bold">Posted on {new Date(post.createdAt).toLocaleDateString()}</text>
+              <text weight="bold">Posted on {formattedDate}</text>
+            ) : currentMetric === 'karma' ? (
+              <text weight="bold">{post.karma.toLocaleString()} karma</text>
+            ) : currentMetric === 'comments' && post.comments !== undefined ? (
+              <text weight="bold">{post.comments.toLocaleString()} comments</text>
+            // ) : currentMetric === 'awards' && post.awards !== undefined ? (
+            //   <text weight="bold">{post.awards.toLocaleString()} awards</text> // ToDo To be added!
             ) : (
               <text weight="bold">{post.karma.toLocaleString()} karma</text>
             )}

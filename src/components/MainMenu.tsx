@@ -30,18 +30,7 @@ export function MainMenu({ onModeSelect }: MainMenuProps) {
         >
               Classic Mode
         </button>
-        
-        <button 
-          width="100%" 
-          appearance='bordered' 
-          padding="medium" 
-          cornerRadius="medium" 
-          icon='award'
-          onPress={() => onModeSelect('CHALLENGE')}
-        >
-          Challenge
-        </button>
-        
+
         <button 
           width="100%" 
           appearance='bordered' 
@@ -62,6 +51,28 @@ export function MainMenu({ onModeSelect }: MainMenuProps) {
           onPress={() => onModeSelect('CHAOS')}
         >
           Chaos Mode
+        </button>
+
+        <button 
+          width="100%" 
+          appearance='bordered' 
+          padding="medium" 
+          cornerRadius="medium" 
+          icon='users'
+          onPress={() => onModeSelect('CHALLENGE')}
+        >
+          Challenge
+        </button>
+
+        <button 
+          width="100%" 
+          appearance='bordered' 
+          padding="medium" 
+          cornerRadius="medium" 
+          icon='award'
+          onPress={() => onModeSelect('LEADERBOARD')}
+        >
+          Leaderboards
         </button>
       </vstack>
     </vstack>

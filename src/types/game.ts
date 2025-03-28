@@ -1,5 +1,5 @@
 
-export type GameMode = 'KARMA' | 'ERA' | 'CHAOS' | 'CHALLENGE' | null;
+export type GameMode = 'KARMA' | 'ERA' | 'CHAOS' | 'CHALLENGE' | 'LEADERBOARD' | null;
 
 export type Metric = 'karma' | 'comments' | 'awards' | 'age';
 
@@ -11,7 +11,7 @@ export type GamePost = {
   karma: number;
   comments?: number;
   awards?: number;
-  createdAt?: Date;
+  createdAt?: string;
   image?: string;
 }
 

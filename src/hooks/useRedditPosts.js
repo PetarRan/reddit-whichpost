@@ -24,8 +24,8 @@ export function useRedditPosts(context) {
         author: post.authorName,
         karma: post.score,
         comments: post.numberOfComments,
-        createdAt: post.createdAt,
-        thumbnail: post.thumbnail?.url
+        thumbnail: post.thumbnail?.url,
+        createdAt: new Date(post.createdAt).toISOString(),
       }));
     },
     {

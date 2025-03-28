@@ -58,7 +58,7 @@ export function GameInterface({
   });
 
   useState(() => {
-    setTimeLeft(7);
+    setTimeLeft(12);
     return null;
   });
 
@@ -71,7 +71,7 @@ export function GameInterface({
   const handleGuess = (postId: string, isCorrect: boolean) => {
     timerInterval.stop();
     if (isCorrect) {
-      setTimeLeft(7);
+      setTimeLeft(12);
       timerInterval.start();
       setGameResult('correct');
       onGuess(postId);
@@ -84,7 +84,7 @@ export function GameInterface({
   const handleRetry = () => {
     setGameOver(false);
     setGameResult(null);
-    setTimeLeft(7);
+    setTimeLeft(12);
     onRetry();
     timerInterval.start();
   };
@@ -102,28 +102,46 @@ export function GameInterface({
           <text size="large">Your score: {score}</text>
           <text>Best streak: {bestStreak}</text>
         </vstack>
-
         <hstack gap="medium" width="100%" alignment="center">
-        {posts.slice(0, 2).map(post => (
-          <vstack 
-            key={post.id} 
-            width="45%" 
-            borderWidth="2px" 
-            borderColor={post.id === correctPost.id ? "green" : "red"}
-            cornerRadius="medium"
-            padding="small"
-          >
-            <PostCard 
-              post={post} 
-              showValue={true}
-              metric={metric}
-              gameMode={mode}
-            />
-          </vstack>
-        ))}
-      </hstack>
+          {mode === 'ERA' ? (
+            <vstack 
+              key={correctPost.id} 
+              width="45%" 
+              borderWidth="2px" 
+              borderColor="red"
+              cornerRadius="medium"
+              padding="small"
+            >
+              <PostCard 
+                post={correctPost} 
+                showValue={true}
+                metric={metric}
+                gameMode={mode}
+              />
+            </vstack>
+          ) : (
+            posts.slice(0, 2).map(post => (
+              <vstack 
+          key={post.id} 
+          width="45%" 
+          borderWidth="2px" 
+          borderColor={post.id === correctPost.id ? "green" : "red"}
+          cornerRadius="medium"
+          padding="small"
+              >
+          <PostCard 
+            post={post} 
+            showValue={true}
+            metric={metric}
+            gameMode={mode}
+            currentMetric={currentMetric}
+          />
+              </vstack>
+            ))
+          )}
+        </hstack>
 
-      {incorrectPost && (
+      {mode !== 'ERA' && incorrectPost && (
         <text>
           The difference was {Math.abs(correctPost[metric] - incorrectPost[metric])} {metric}!
         </text>
@@ -155,9 +173,27 @@ export function GameInterface({
     );
   }
 
+  if (mode === 'CHALLENGE') {
+    return (
+      <vstack width="100%" padding="medium" gap="medium" alignment="center middle" height="100%">
+        <text size="xxlarge" weight="bold">COMING SOON</text>
+        <text size="large">The Challenge mode is under development. Stay tuned!</text>
+        <button 
+          width="45%" 
+          backgroundColor="neutral-background" 
+          cornerRadius="medium"
+          alignment="center"
+          appearance="bordered"
+          onPress={onBackToMenu}
+        >
+          Back to Menu
+        </button>
+      </vstack>
+    );
+  }  
+
   if (mode === 'ERA' && posts.length > 0) {
     const post = posts[0];
-    const dateOptions = post.createdAt ? generateEraOptions(post.createdAt) : [];
     return (
       <vstack width="100%" padding="medium" gap="medium" alignment='center'>
         <hstack width="100%">

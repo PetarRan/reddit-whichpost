@@ -142,14 +142,10 @@ export const determineCorrectGuess = (
         post1Value = post1.comments || 0;
         post2Value = post2.comments || 0;
         break;
-      case 'awards':
-        post1Value = post1.awards || 0;
-        post2Value = post2.awards || 0;
-        break;
-      case 'age':
-        post1Value = post1.createdAt ? Date.now() - post1.createdAt.getTime() : 0;
-        post2Value = post2.createdAt ? Date.now() - post2.createdAt.getTime() : 0;
-        break;
+      // case 'awards':
+      //   post1Value = post1.awards || 0;
+      //   post2Value = post2.awards || 0;
+      //   break;
     }
     
     const higherValuePost = post1Value > post2Value ? post1 : post2;

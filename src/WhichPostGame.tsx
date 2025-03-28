@@ -7,8 +7,8 @@ import { GameMode, GamePost, Metric } from './types/game';
 
 export function WhichPostGame(context) {
   const [mode, setMode] = useState<GameMode>(null);
-  const [posts, setPosts] = useState<Omit<GamePost, 'createdAt'> & { createdAt: string }[]>([]);
-  const [timer, setTimer] = useState(7);
+  const [posts, setPosts] = useState<GamePost[]>([]);
+  const [timer, setTimer] = useState(12);
   const [currentMetric, setCurrentMetric] = useState<Metric>('karma');
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -46,7 +46,7 @@ export function WhichPostGame(context) {
       // We have enough cached posts, use them
       const gamePosts = getRandomPosts(2);
       setPosts(gamePosts);
-      setTimer(7);
+      setTimer(12);
       setIsTimerRunning(true);
       setShouldFetchPosts(false);
       setIsLoading(false);
@@ -54,7 +54,7 @@ export function WhichPostGame(context) {
       // Fallback to mock posts if cache is empty
       const mockPosts = generateMockPosts(mode);
       setPosts(mockPosts);
-      setTimer(7);
+      setTimer(12);
       setIsTimerRunning(true);
       setShouldFetchPosts(false);
       setIsLoading(false);
@@ -127,7 +127,7 @@ export function WhichPostGame(context) {
         setScore(0);
         setStreak(0);
         setGameOver(false);
-        setTimer(7);
+        setTimer(12);
         setShouldFetchPosts(true); // ToDo
         setIsTimerRunning(true);
       }}
