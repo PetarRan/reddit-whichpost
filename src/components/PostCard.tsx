@@ -19,8 +19,8 @@ export function PostCard({ post, showValue = false, onPress }: PostCardProps) {
       {post.image && (
         <image 
           url={post.image}
-          imageWidth={300}
-          imageHeight={169}
+          imageWidth={120}
+          imageHeight={120}
           width="100%"
           resizeMode="cover"
         />

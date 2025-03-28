@@ -16,7 +16,6 @@ export function WhichPostGame() {
   const [shouldFetchPosts, setShouldFetchPosts] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
-  // Handle timer with useInterval
   const timerInterval = useInterval(() => {
     setTimer((prev) => {
       if (prev <= 1) {
@@ -28,30 +27,24 @@ export function WhichPostGame() {
     });
   }, 1000);
 
-  // Watch for timer state changes
   if (isTimerRunning) {
     timerInterval.start();
   } else {
     timerInterval.stop();
   }
 
-  // Watch for post fetching flag
   if (shouldFetchPosts && mode) {
     // Generate mock posts for the selected mode
     const mockPosts = generateMockPosts(mode);
     setPosts(mockPosts);    
-    // Reset timer and start it
     setTimer(7);
     setIsTimerRunning(true);
-    
-    // Reset the flag
     setShouldFetchPosts(false);
   }
 
   const handleGuess = (chosenPostId: string) => {
     if (posts.length === 0) return;
 
-    // Stop the timer
     setIsTimerRunning(false);
 
     const { isCorrect, newMetric } = determineCorrectGuess(
@@ -70,7 +63,6 @@ export function WhichPostGame() {
       setScore(prev => prev + (100 * newStreak));
       setStreak(newStreak);
       
-      // Update best streak if current streak is higher
       if (newStreak > bestStreak) {
         setBestStreak(newStreak);
       }
@@ -79,8 +71,6 @@ export function WhichPostGame() {
       setStreak(0);
     }
 
-    // Trigger post fetching after a short delay
-    // We use state to trigger this instead of setTimeout
     setShouldFetchPosts(true);
   };
 
@@ -95,7 +85,6 @@ export function WhichPostGame() {
     setStreak(0);
     setBestStreak(0);
     
-    // Trigger initial post fetching
     setShouldFetchPosts(true);
   };
 
@@ -116,16 +105,11 @@ export function WhichPostGame() {
         setMode(null);
       }}
       onRetry={() => {
-        // Reset game state for retry
         setScore(0);
         setStreak(0);
-        // Keep the best streak
-        // Reset timer
         setGameOver(false);
         setTimer(7);
-        // Fetch new posts
-        setShouldFetchPosts(true);
-        // Start the timer again
+        setShouldFetchPosts(true); // ToDo
         setIsTimerRunning(true);
       }}
     />
