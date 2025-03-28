@@ -90,6 +90,11 @@ export function GameInterface({
   };
 
   if (gameOver) {
+
+    const metric = currentMetric || 'karma';
+    const correctPost = posts.reduce((a, b) => a[metric] > b[metric] ? a : b);
+    const incorrectPost = posts.find(post => post.id !== correctPost.id);  
+
     return (
       <vstack width="100%" padding="medium" gap="large" alignment="center middle" height="100%">
         <vstack alignment="center" gap="medium">
@@ -97,28 +102,55 @@ export function GameInterface({
           <text size="large">Your score: {score}</text>
           <text>Best streak: {bestStreak}</text>
         </vstack>
-        <vstack gap="medium" width="100%" maxWidth="300px">
-          <hstack 
-            width="100%" 
-            padding="medium" 
+
+        <hstack gap="medium" width="100%" alignment="center">
+        {posts.slice(0, 2).map(post => (
+          <vstack 
+            key={post.id} 
+            width="45%" 
+            borderWidth="2px" 
+            borderColor={post.id === correctPost.id ? "upvote" : "downvote"}
+            cornerRadius="medium"
+            padding="small"
+          >
+            <PostCard 
+              post={post} 
+              showValue={true}
+              metric={metric}
+              gameMode={mode}
+            />
+          </vstack>
+        ))}
+      </hstack>
+
+      {incorrectPost && (
+        <text>
+          The difference was {Math.abs(correctPost[metric] - incorrectPost[metric])} {metric}!
+        </text>
+      )}
+
+        <hstack gap="medium" width="100%" maxWidth="600px" alignment='center'>
+          <button 
+            width="45%" 
             backgroundColor="neutral" 
             cornerRadius="medium"
             alignment="center"
+            appearance='secondary'
             onPress={handleRetry}
           >
-            <text color="white" weight="bold">Retry {mode} Mode</text>
-          </hstack>
-          <hstack 
-            width="100%" 
-            padding="medium" 
+            Retry {mode} Mode
+          </button>
+          <button 
+            width="45%" 
             backgroundColor="neutral-background" 
             cornerRadius="medium"
             alignment="center"
+            appearance='bordered'
             onPress={onBackToMenu}
           >
-            <text>Back to Menu</text>
-          </hstack>
-        </vstack>
+            Back to Menu
+          </button>
+        </hstack>
       </vstack>
     );
   }
@@ -143,13 +175,13 @@ export function GameInterface({
         <ScoreDisplay streak={streak} bestStreak={bestStreak} score={score} />
         <vstack alignment="center" gap="small">
           <hstack 
-            width="60px" 
-            height="60px" 
+            width="30px" 
+            height="30px" 
             cornerRadius="full" 
             backgroundColor={timerColor} 
             alignment="center middle"
           >
-            <text size="xlarge" weight="bold">{timeLeft}</text>
+            <text size="large" weight="bold">{timeLeft}</text>
           </hstack>
         </vstack>
         <vstack width="70%" alignment="center">
@@ -170,7 +202,6 @@ export function GameInterface({
               const is2010s = postDate && 
                 postDate.getFullYear() >= 2010 && 
                 postDate.getFullYear() < 2020;
-              const is2020s = postDate && postDate.getFullYear() >= 2020;
               handleGuess(post.id, is2010s);
             }}
           >
@@ -183,8 +214,8 @@ export function GameInterface({
             cornerRadius="medium"
             alignment="center middle"
             onPress={() => {
-              const is2020s = post.createdAt && 
-                post.createdAt.getFullYear() >= 2020;
+              const postDate = new Date(post.createdAt);
+              const is2020s = postDate && postDate.getFullYear() >= 2020;
               handleGuess(post.id, is2020s);
             }}
           >

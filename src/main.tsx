@@ -28,10 +28,10 @@ Devvit.addMenuItem({
 // Add custom post type
 Devvit.addCustomPostType({
   name: 'WhichPost Game',
-  height: 'tall', // or 'tall' depending on your needs
+  height: 'tall',
   render: (context) => (
     <vstack height="100%" width="100%">
-      <WhichPostGame />
+      <WhichPostGame context={context}/>
     </vstack>
   ),
 });

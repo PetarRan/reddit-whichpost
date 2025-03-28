@@ -5,9 +5,10 @@ interface PostCardProps {
   post: GamePost;
   showValue?: boolean;
   onPress?: () => void;
+  gameMode?: string;
 }
 
-export function PostCard({ post, showValue = false, onPress }: PostCardProps) {
+export function PostCard({ post, showValue = false, onPress, gameMode = '' }: PostCardProps) {
   return (
     <vstack 
       width="100%" 
@@ -38,7 +39,11 @@ export function PostCard({ post, showValue = false, onPress }: PostCardProps) {
         
         {showValue && (
           <hstack padding="small" cornerRadius="medium" backgroundColor="primary-background" alignment="center">
-            <text weight="bold">{post.karma.toLocaleString()} karma</text>
+            {gameMode === "ERA" ? (
+              <text weight="bold">Posted on {new Date(post.createdAt).toLocaleDateString()}</text>
+            ) : (
+              <text weight="bold">{post.karma.toLocaleString()} karma</text>
+            )}
           </hstack>
         )}
       </vstack>

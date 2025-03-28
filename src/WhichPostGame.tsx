@@ -1,10 +1,11 @@
 import { Devvit, useState, useInterval } from '@devvit/public-api';
 import { MainMenu } from './components/MainMenu';
+import { useRedditPosts } from './hooks/useRedditPosts';
 import { GameInterface } from './components/GameInterface';
-import { determineCorrectGuess, generateMockPosts } from './utils/gameLogic';
+import { determineCorrectGuess, generateMockPosts,  } from './utils/gameLogic';
 import { GameMode, GamePost, Metric } from './types/game';
 
-export function WhichPostGame() {
+export function WhichPostGame(context) {
   const [mode, setMode] = useState<GameMode>(null);
   const [posts, setPosts] = useState<Omit<GamePost, 'createdAt'> & { createdAt: string }[]>([]);
   const [timer, setTimer] = useState(7);
@@ -14,7 +15,10 @@ export function WhichPostGame() {
   const [bestStreak, setBestStreak] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [shouldFetchPosts, setShouldFetchPosts] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+
+  const { postCache, loading, getRandomPosts } = useRedditPosts(context.context);
 
   const timerInterval = useInterval(() => {
     setTimer((prev) => {
@@ -25,7 +29,7 @@ export function WhichPostGame() {
       }
       return prev - 1;
     });
-  }, 1000);
+  }, 1100); // Giving it 100ms
 
   if (isTimerRunning) {
     timerInterval.start();
@@ -34,12 +38,27 @@ export function WhichPostGame() {
   }
 
   if (shouldFetchPosts && mode) {
-    // Generate mock posts for the selected mode
-    const mockPosts = generateMockPosts(mode);
-    setPosts(mockPosts);    
-    setTimer(7);
-    setIsTimerRunning(true);
-    setShouldFetchPosts(false);
+    setIsLoading(true);
+    setIsTimerRunning(false);
+    
+    // Get posts from cache instead of making a new request
+    if (postCache.length > 10) {
+      // We have enough cached posts, use them
+      const gamePosts = getRandomPosts(2);
+      setPosts(gamePosts);
+      setTimer(7);
+      setIsTimerRunning(true);
+      setShouldFetchPosts(false);
+      setIsLoading(false);
+    } else {
+      // Fallback to mock posts if cache is empty
+      const mockPosts = generateMockPosts(mode);
+      setPosts(mockPosts);
+      setTimer(7);
+      setIsTimerRunning(true);
+      setShouldFetchPosts(false);
+      setIsLoading(false);
+    }
   }
 
   const handleGuess = (chosenPostId: string) => {
